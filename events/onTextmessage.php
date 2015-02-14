@@ -11,11 +11,11 @@ function onTextmessage(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_N
     echo "[SIGNAL] Client " . $event["invokername"] . " sent textmessage: " . $event["msg"] . "\n";
     //var_dump($event->getData());
 
-    //$msg = new TextMessages($event);
-    $msg->event = $event;
+    $msg = new TextMessages($event, $host);
+    //$msg->event = $event;
 
 
-    switch($msg->event->getData()["targetmode"])
+    switch(@$msg->event->getData()["targetmode"])
     {
         case 1: echo "[DEBUG] Private message\n"; $msg->PrivateMessageHandler(); break;
         case 2: echo "[DEBUG] Channel message\n"; $msg->ChannelMessageHandler(); break;

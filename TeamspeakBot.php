@@ -25,6 +25,8 @@ class Teamspeak3Bot extends TeamSpeak3 {
 
         try
         {
+            /* connect to server, login and get TeamSpeak3_Node_Host object by URI */
+            $this->Teamspeak3Host = $this::factory("serverquery://{$this->Username}:{$this->Password}@{$this->IP}:10011/?server_port=9987&blocking=0&nickname={$name}");
             /* subscribe to various events */
             TeamSpeak3_Helper_Signal::getInstance()->subscribe("serverqueryConnected", "onConnect");
             //TeamSpeak3_Helper_Signal::getInstance()->subscribe("serverqueryCommandStarted", "onCommand");
@@ -39,8 +41,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
             $this->Teamspeak3Host->notifyRegister("textserver");
             $this->Teamspeak3Host->notifyRegister("textchannel");
             $this->Teamspeak3Host->notifyRegister("textprivate");
-            /* connect to server, login and get TeamSpeak3_Node_Host object by URI */
-            $this->Teamspeak3Host = $this::factory("serverquery://{$this->Username}:{$this->Password}@{$this->IP}:10011/?server_port=9987&blocking=0&nickname={$name}");
+
 
 
             $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[cspacer632]Bot House(Admins only)");
@@ -57,7 +58,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
 
     public function Start()
     {
-        $GLOBALS['BotChannel']->message("AGNBot 2.0 Starting!");
+        $this->BotChannel->message("AGNBot 2.0 Starting!");
         if($this->Connected === true) $this::Run();
 
     }
@@ -77,6 +78,14 @@ class Teamspeak3Bot extends TeamSpeak3 {
     {
         $this->Teamspeak3Host->message($msg); // Fatal error: Call to a member function message() on a non-object in
         //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
+    }
+
+    /**
+     * @return TeamSpeak3_Adapter_Abstract
+     */
+    public function getTeamspeak3Host()
+    {
+        return $this->Teamspeak3Host;
     }
 
 
