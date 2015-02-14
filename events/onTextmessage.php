@@ -4,6 +4,8 @@
  * User: John
  * Date: 13/02/2015
  * Time: 06:24
+ * @param TeamSpeak3_Adapter_ServerQuery_Event $event
+ * @param TeamSpeak3_Node_Host $host
  */
 
 function onTextmessage(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_Node_Host $host)
