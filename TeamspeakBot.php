@@ -44,7 +44,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
 
 
             $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[cspacer632]Bot House(Admins only)");
-            $this->Teamspeak3Host->clientMove($this->Teamspeak3Host->whoamiGet("client_id") ,$GLOBALS['BotChannel']);
+            $this->Teamspeak3Host->clientMove($this->Teamspeak3Host->whoamiGet("client_id"), $this->BotChannel);
 
             $this->Connected = true;
         }
