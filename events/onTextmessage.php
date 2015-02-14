@@ -11,7 +11,7 @@ function onTextmessage(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_N
     echo "[SIGNAL] Client " . $event["invokername"] . " sent textmessage: " . $event["msg"] . "\n";
     //var_dump($event->getData());
 
-    $msg = new TextMessages($event, $host);
+    $msg = new TextMessages($event, $host->serverGetByPort(9987));
     //$msg->event = $event;
 
 

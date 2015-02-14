@@ -80,6 +80,12 @@ class Teamspeak3Bot extends TeamSpeak3 {
         //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
     }
 
+    public function privateMessage($msg)
+    {
+        //$this->Teamspeak3Host->client; // Fatal error: Call to a member function message() on a non-object in
+        //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
+    }
+
     /**
      * @return TeamSpeak3_Adapter_Abstract
      */
