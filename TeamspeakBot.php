@@ -17,7 +17,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
     public $WhoAmI;
     public $Connected = false;
 
-    public function __construct($ip, $username, $password, $name = NULL)
+    public function __construct($ip, $username, $password, $name = "Bot")
     {
         $this->IP = $ip;
         $this->Username = $username;
@@ -42,9 +42,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
             $this->Teamspeak3Host->notifyRegister("textchannel");
             $this->Teamspeak3Host->notifyRegister("textprivate");
 
-
-
-            $this->BotChannel = $this->Teamspeak3Host->channelGetByName("Public Bot Channel");
+            $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[ DrBot Administation Room ]");
             $this->Teamspeak3Host->clientMove($this->Teamspeak3Host->whoamiGet("client_id"), $this->BotChannel);
 
             $_SESSION[] = $this->Connected = true;
@@ -60,7 +58,6 @@ class Teamspeak3Bot extends TeamSpeak3 {
     {
         $this->BotChannel->message("AGNBot 2.0 Starting!");
         if($this->Connected === true) $this::Run();
-
     }
 
     public function Run()
@@ -70,20 +67,18 @@ class Teamspeak3Bot extends TeamSpeak3 {
 
     public function ChannelMessage($msg)
     {
-        $this->BotChannel->message($msg); // Fatal error: Call to a member function message() on a non-object in
-                                         //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
+        $this->BotChannel->message($msg);
     }
 
     public function ServerMessage($msg)
     {
-        $this->Teamspeak3Host->message($msg); // Fatal error: Call to a member function message() on a non-object in
-        //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
+        $this->Teamspeak3Host->message($msg);
+
     }
 
     public function privateMessage($msg)
     {
-        //$this->Teamspeak3Host->client; // Fatal error: Call to a member function message() on a non-object in
-        //C:\Users\DrWhat\Documents\AGNBot2.0\TeamspeakBot.php on line 72
+        //$this->Teamspeak3Host->client;
     }
 
     /**
