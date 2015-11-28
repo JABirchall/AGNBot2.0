@@ -5,7 +5,7 @@
  * Date: 13/02/2015
  * Time: 05:51
  */
-
+define("VERSION", "1.2.1 ALPHA1");
 class Teamspeak3Bot extends TeamSpeak3 {
 
     protected $IP;
@@ -33,7 +33,7 @@ class Teamspeak3Bot extends TeamSpeak3 {
             TeamSpeak3_Helper_Signal::getInstance()->subscribe("serverqueryWaitTimeout", "onTimeout");
             TeamSpeak3_Helper_Signal::getInstance()->subscribe("notifyLogin", "onLogin");
             TeamSpeak3_Helper_Signal::getInstance()->subscribe("notifyEvent", "onEvent");
-            TeamSpeak3_Helper_Signal::getInstance()->subscribe("notifyTextmessage", "onTextmessage");
+            TeamSpeak3_Helper_Signal::getInstance()->subscribe("notifyTextmessage", "onTextMessage");
             TeamSpeak3_Helper_Signal::getInstance()->subscribe("notifyServerselected", "onSelect");
             /* register for all events available */
             $this->Teamspeak3Host->notifyRegister("server");
@@ -42,14 +42,16 @@ class Teamspeak3Bot extends TeamSpeak3 {
             $this->Teamspeak3Host->notifyRegister("textchannel");
             $this->Teamspeak3Host->notifyRegister("textprivate");
 
-            $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[ DrBot Administation Room ]");
+            $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[ Private Administration Room + Bots ]");
             $this->Teamspeak3Host->clientMove($this->Teamspeak3Host->whoamiGet("client_id"), $this->BotChannel);
 
             $_SESSION[] = $this->Connected = true;
+            echo "[INFO] Connected\n";
         }
         catch(Exception $e)
         {
             $this->Connected = false;
+            echo "Failed\n";
             die("[ERROR]  " . $e->getMessage() . "\n". $e->getTraceAsString() ."\n");
         }
     }
@@ -57,12 +59,13 @@ class Teamspeak3Bot extends TeamSpeak3 {
     public function Start()
     {
         $this->BotChannel->message("AGNBot 2.0 Starting!");
-        if($this->Connected === true) $this::Run();
+        while(true)
+            $this->Run();
     }
 
     public function Run()
     {
-        while($this->Connected === true) $this->Teamspeak3Host->getAdapter()->wait();
+        $this->Teamspeak3Host->getAdapter()->wait();
     }
 
     public function ChannelMessage($msg)

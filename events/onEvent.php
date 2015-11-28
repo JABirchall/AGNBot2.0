@@ -24,4 +24,10 @@ function onEvent(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_Node_Ho
             $msg->DeleteTempChannel($tempchannel['cid']);
         }
     }
+
+
+    $server = $host->serverGetByPort(9987);
+
+    //$server->client
+
 }

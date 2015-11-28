@@ -12,17 +12,20 @@ class TextMessages
     public $Teamspeak3Host;
     public $BotChannel;
 
-    public function __construct(TeamSpeak3_Adapter_ServerQuery_Event $event, $host)
+    public function __construct(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_Node_Server $host)
     {
         $this->event = $event;
         $this->Teamspeak3Host = $host;
-        $this->BotChannel = $this->Teamspeak3Host->channelGetByName("Public Bot Channel");
+        $this->BotChannel = $this->Teamspeak3Host->channelGetByName("[ Private Administration Room + Bots ]");
     }
 
     public function ServerMessageHandler()
     {
-        if($this->startsWith("!version", $this->event['msg'])) $this->Teamspeak3Host->message("IM AGNBot2.0 Not even versioned");
+        if($this->startsWith("!version", $this->event['msg'])) $this->Teamspeak3Host->message("I'm AGNBot2 : ".VERSION);
         if($this->startsWith("!dchannel", $this->event['msg'])) $this->DonatorChannel();
+        if($this->startsWith("!clientinfo", $this->event['msg'])) $this->ClientInfo();
+        if($this->startsWith("!jail", $this->event['msg'])) $this->Jail();
+        if($this->startsWith("!help", $this->event['msg'])) $this->help();
     }
 
     public function ChannelMessageHandler()
@@ -33,20 +36,20 @@ class TextMessages
 
     public function PrivateMessageHandler()
     {
-        $this->event->getData();
+        if($this->startsWith("!help", $this->event['msg'])) $this->PrivateHelp();
     }
 
     /**
-     * Command Functiuons
+     * Command Functions
      * Large blocks of code we dont want in the Handlers
      */
 
     private function ChannelHelp()
     {
         $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
-        $Client->message("[color=green] [b]Available commands:");
-        $Client->message("[color=green] [b]!tchannel[/b] - Request a temporary channel, will be deleted after 30 minutes.");
-        $Client->message("[color=green] [b]!validate[/b] - Validate you forum login to get member permissions. (Not complete)");
+        $Client->message("[color=green] [b]----- Channel Commands -----");
+        $Client->message("[color=green] [b]Command !tchannel:[/b] Request a temporary channel, will be deleted after 30 minutes.");
+        $Client->message("[color=green] [b]Command !validate:[/b] Validate you forum login to get member permissions. (Not complete)");
     }
 
     private function TempChannel()
@@ -122,6 +125,28 @@ class TextMessages
         }
     }
 
+    private function Jail()
+    {
+        $jail = "~JAIL~";
+        echo "Called Jail()\n";
+        list($command, $user) = explode(' ', $this->event['msg']);
+        try {
+            $suspect = $this->Teamspeak3Host->clientGetByName($user);
+            $admin = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+            $suspect->addServerGroup(169);
+            $suspect->move($this->Teamspeak3Host->channelGetByName($jail));
+            $admin->move($this->Teamspeak3Host->channelGetByName($jail));
+            $suspect->poke("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
+            $suspect->message("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
+            $suspect->message("[COLOR=red][b] They will explain what you have done wrong and decide the best course of action.");
+            $suspect->message("[COLOR=red][b] If you think you have been wrongly jailed or thought the outcome was hursh, Please post an appeal on out forums.");
+            $suspect->message("[COLOR=red][b] [url]http://aggressivegaming.org[/url] Don't complain to other staff members on teamspeak.");
+            $suspect->message("[COLOR=red][b] Due to the shortage of robots, Some of our staff are human and may act unpredictably when abused");
+        }catch(Exception $e){
+            echo $e->getMessage();
+        }
+    }
+
     private function DonatorChannel()
     {
         list($command, $user) = explode(' ', $this->event['msg']);
@@ -159,10 +184,52 @@ class TextMessages
         $Client->setChannelGroup($channel, 5);
     }
 
-    public function startsWith($pattern, $string)
+    private function startsWith($pattern, $string)
     {
         return (substr($string, 0, strlen($pattern)) == $pattern) ? TRUE : FALSE;
     }
 
+    private function ClientInfo()
+    {
+        list($command, $user) = explode(' ', $this->event['msg']);
+        $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+        $info = $this->Teamspeak3Host->clientInfoDb($this->Teamspeak3Host->clientFindDb($user));
+
+        $Client->message("[COLOR=blue][B]{$user}: Database ID  {$info["client_database_id"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Unique ID  {$info["client_unique_identifier"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Joined  ".date("F j, Y, g:i a",$info["client_created"])."[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Last connection  ". date("F j, Y, g:i a",$info["client_lastconnected"])."[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Total connections  {$info["client_totalconnections"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Client description  {$info["client_description"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Last IP  {$info["client_lastip"]}[/COLOR]");
+    }
+
+    private function help()
+    {
+        $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+        $Client->message("[color=green] [b]----- Server Commands -----");
+        $Client->message("[color=green] [b]Command !help:[/b] Display this help message.");
+        $Client->message("[color=green] [b]Command !dchannel:[/b] Create a donator channel for a user.");
+        $Client->message("[color=green] [b]Command !version:[/b] Display the bot version.");
+        $Client->message("[color=green] [b]Command !clientinfo:[/b] View the collected information of a user online Or offline.");
+        $Client->message("[color=green] [b]----- Channel Commands -----");
+        $Client->message("[color=green] [b]Command !tchannel:[/b] Request a temporary channel, will be deleted after 30 minutes.");
+        $Client->message("[color=green] [b]Command !validate:[/b] Validate you forum login to get member permissions. (Not complete)");
+        $Client->message("[color=green] [b]Command !help:[/b] Display channel only help message.");
+        $Client->message("[color=green] [b]----- Private Commands -----");
+        $Client->message("[color=green] [b]Command !help:[/b] Display private message only help message.");
+    }
+
+    private function PrivateHelp()
+    {
+        $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+        $Client->message("[color=green] [b]----- Server Commands -----");
+        $Client->message("[color=green] [b]Command !help:[/b] Display this help message.");
+    }
+
+    public function sendBotChannelMessage($message)
+    {
+        $this->BotChannel->message($message);
+    }
 
 }
