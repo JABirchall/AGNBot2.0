@@ -132,10 +132,15 @@ class TextMessages
         list($command, $user) = explode(' ', $this->event['msg']);
         try {
             $suspect = $this->Teamspeak3Host->clientGetByName($user);
+            //var_dump($suspect);
             $admin = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+            if($suspect === "invalid clientID") {
+                $admin->poke("[COLOR=red][b] There are no users online by that name");
+                return;
+            }
             $suspect->addServerGroup(169);
             $suspect->move($this->Teamspeak3Host->channelGetByName($jail));
-            $admin->move($this->Teamspeak3Host->channelGetByName($jail));
+            //$admin->move($this->Teamspeak3Host->channelGetByName($jail));
             $suspect->poke("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
             $suspect->message("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
             $suspect->message("[COLOR=red][b] They will explain what you have done wrong and decide the best course of action.");
@@ -195,13 +200,13 @@ class TextMessages
         $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
         $info = $this->Teamspeak3Host->clientInfoDb($this->Teamspeak3Host->clientFindDb($user));
 
-        $Client->message("[COLOR=blue][B]{$user}: Database ID  {$info["client_database_id"]}[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Unique ID  {$info["client_unique_identifier"]}[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Joined  ".date("F j, Y, g:i a",$info["client_created"])."[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Last connection  ". date("F j, Y, g:i a",$info["client_lastconnected"])."[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Total connections  {$info["client_totalconnections"]}[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Client description  {$info["client_description"]}[/COLOR]");
-        $Client->message("[COLOR=blue][B]{$user}: Last IP  {$info["client_lastip"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Database ID: {$info["client_database_id"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Unique ID: {$info["client_unique_identifier"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Joined: ".date("F j, Y, g:i a",$info["client_created"])."[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Last connection: ". date("F j, Y, g:i a",$info["client_lastconnected"])."[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Total connections: {$info["client_totalconnections"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Client description: {$info["client_description"]}[/COLOR]");
+        $Client->message("[COLOR=blue][B]{$user}: Last IP: {$info["client_lastip"]}[/COLOR]");
     }
 
     private function help()
