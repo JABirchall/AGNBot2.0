@@ -12,19 +12,6 @@ function onEvent(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_Node_Ho
 {
     echo "[SIGNAL] Received notification " . $event->getType() . "\n";
 
-    for($i = 0; $i <= count(@$_SESSION); $i++)
-    {
-        //if(isset($_SESSION[$i]['cid'])) echo "{$_SESSION[$i]['expire']} : ".time()."\n";
-
-        if(isset($_SESSION[$i]['cid']) && $_SESSION[$i]['expire'] <= time()){
-            $tempchannel = $_SESSION[$i];
-            unset($_SESSION[$i]);
-            echo "[INFO] Channel ID {$tempchannel['cid']} has expired";
-            $msg = new TextMessages($event, $host->serverGetByPort(9987));
-            $msg->DeleteTempChannel($tempchannel['cid']);
-        }
-    }
-
 
     $server = $host->serverGetByPort(9987);
 
