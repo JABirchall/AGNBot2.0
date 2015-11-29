@@ -25,6 +25,7 @@ class TextMessages
         if($this->startsWith("!dchannel", $this->event['msg'])) $this->DonatorChannel();
         if($this->startsWith("!clientinfo", $this->event['msg'])) $this->ClientInfo();
         if($this->startsWith("!jail", $this->event['msg'])) $this->Jail();
+        if($this->startsWith("!unjail", $this->event['msg'])) $this->unJail();
         if($this->startsWith("!help", $this->event['msg'])) $this->help();
     }
 
@@ -127,28 +128,55 @@ class TextMessages
 
     private function Jail()
     {
-        $jail = "~JAIL~";
-        echo "Called Jail()\n";
+        $jail = $this->Teamspeak3Host->channelGetByName("~JAIL~");
         list($command, $user) = explode(' ', $this->event['msg']);
         try {
-            $suspect = $this->Teamspeak3Host->clientGetByName($user);
-            //var_dump($suspect);
+            $suspects = $this->Teamspeak3Host->clientFind($user);
             $admin = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
-            if($suspect === "invalid clientID") {
+
+            foreach($suspects as $suspect) {
+                $suspect = $this->Teamspeak3Host->clientGetById($suspect["clid"]);
+                $suspect->addServerGroup(169);
+                $suspect->move($jail);
+                $suspect->poke("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
+                $suspect->message("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
+                $suspect->message("[COLOR=red][b] They will explain what you have done wrong and decide the best course of action.");
+                $suspect->message("[COLOR=red][b] If you think you have been wrongly jailed or thought the outcome was harsh, Please post an appeal on our forums.");
+                $suspect->message("[COLOR=red][b] [url]http://aggressivegaming.org[/url] Don't complain to other staff members on teamspeak.");
+                $suspect->message("[COLOR=red][b] Due to the shortage of robots, Some of our staff are human and may act unpredictably when abused!");
+            }
+
+            $admin->move($jail);
+            $admin->message("[COLOR=red][b] You are responsible for the outcome of this incident.");
+        }catch(Exception $e){
+            $message = $e->getMessage();
+            $admin = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+            if($message === "invalid clientID") {
                 $admin->poke("[COLOR=red][b] There are no users online by that name");
                 return;
             }
-            $suspect->addServerGroup(169);
-            $suspect->move($this->Teamspeak3Host->channelGetByName($jail));
-            //$admin->move($this->Teamspeak3Host->channelGetByName($jail));
-            $suspect->poke("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
-            $suspect->message("[COLOR=red][b] You have been put in jail by {$this->event['invokername']}");
-            $suspect->message("[COLOR=red][b] They will explain what you have done wrong and decide the best course of action.");
-            $suspect->message("[COLOR=red][b] If you think you have been wrongly jailed or thought the outcome was hursh, Please post an appeal on out forums.");
-            $suspect->message("[COLOR=red][b] [url]http://aggressivegaming.org[/url] Don't complain to other staff members on teamspeak.");
-            $suspect->message("[COLOR=red][b] Due to the shortage of robots, Some of our staff are human and may act unpredictably when abused");
+            echo $message;
+        }
+    }
+
+    private function unJail()
+    {
+        try {
+            list($command, $user) = explode(' ', $this->event['msg']);
+            $suspects = $this->Teamspeak3Host->clientFind($user);
+            foreach($suspects as $suspect) {
+                $suspect = $this->Teamspeak3Host->clientGetById($suspect["clid"]);
+                $suspect->remServerGroup(169);
+                $suspect->kick(0x04, "You are free, Run, Run my pretty!");
+            }
         }catch(Exception $e){
-            echo $e->getMessage();
+            $message = $e->getMessage();
+            $admin = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
+            if($message === "invalid clientID") {
+                $admin->poke("[COLOR=red][b] There are no users online by that name");
+                return;
+            }
+            echo $message;
         }
     }
 
@@ -215,6 +243,8 @@ class TextMessages
         $Client->message("[color=green] [b]----- Server Commands -----");
         $Client->message("[color=green] [b]Command !help:[/b] Display this help message.");
         $Client->message("[color=green] [b]Command !dchannel:[/b] Create a donator channel for a user.");
+        $Client->message("[color=green] [b]Command !jail:[/b] Add a user to the troll group, moves them and you to jail.");
+        $Client->message("[color=green] [b]Command !unjail:[/b] removes a user from the troll group and kicks them out of jail.");
         $Client->message("[color=green] [b]Command !version:[/b] Display the bot version.");
         $Client->message("[color=green] [b]Command !clientinfo:[/b] View the collected information of a user online Or offline.");
         $Client->message("[color=green] [b]----- Channel Commands -----");

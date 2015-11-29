@@ -12,9 +12,7 @@ function onEvent(TeamSpeak3_Adapter_ServerQuery_Event $event, TeamSpeak3_Node_Ho
 {
     echo "[SIGNAL] Received notification " . $event->getType() . "\n";
 
-
     $server = $host->serverGetByPort(9987);
 
-    //$server->client
-
 }
+

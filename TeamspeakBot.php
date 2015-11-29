@@ -5,7 +5,7 @@
  * Date: 13/02/2015
  * Time: 05:51
  */
-define("VERSION", "1.2.1 ALPHA1");
+define("VERSION", "1.2.1 ALPHA1 (Private Channel)");
 class Teamspeak3Bot extends TeamSpeak3 {
 
     protected $IP;
