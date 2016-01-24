@@ -57,7 +57,7 @@ class TextMessages
     {
         list($command, $name) = explode(' ', $this->event['msg']);
         $Client = $this->Teamspeak3Host->clientGetByName($this->event['invokername']);
-        $info = $ts3_Client->getInfo();
+        $info = $Client->getInfo();
         if($info['client_servergroups'] == 8)
         {
             $this->BotChannel->message("[color=red][ERROR] You must be a member to request a temp channel");

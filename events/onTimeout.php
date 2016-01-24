@@ -28,14 +28,10 @@ function onTimeout($seconds, TeamSpeak3_Adapter_ServerQuery $adapter)
 
     $server->clientListReset();
     $server->channelListReset();
-    //$channel = $server->channelGetByName("[cspacer0]Aggressive Gaming Teamspeak");
-    //$online = $server->clientCount();
-    //$channel->modify([
-    //    "channel_description" => "Make sure you read the rules.\nUpdate information is in the info channel.\nDonating helps support the server costs\n\n[COLOR=Blue]Online information:\n\t[b]Users online: {$online}"
-    //]);
 
 
-    $staffList = $server->serverGroupClientList(162);
+
+/*    $staffList = $server->serverGroupClientList(162);
     $staffList += $server->serverGroupClientList(163);
     $staffList += $server->serverGroupClientList(185);
     $staffList += $server->serverGroupClientList(191);
@@ -64,6 +60,6 @@ function onTimeout($seconds, TeamSpeak3_Adapter_ServerQuery $adapter)
             }
         }
         var_dump($complaint);
-        $server->complaintDelete($complaint["tcldbid"],$complaint["fcldbid"]);
-    }
+        try {$server->complaintDelete($complaint["tcldbid"],$complaint["fcldbid"]);}catch(Exception $e){}
+    }*/
 }
